@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"myFirstGoProject/pacote"
+)
 
 func main(){
-	fmt.Println("Hello, world!")	
+	fmt.Println("Hello, world!")
+	fmt.Println(pacote.Bar)
 }
