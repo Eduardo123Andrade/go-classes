@@ -4,20 +4,32 @@ import (
 	"fmt"
 )
 
-func main(){
-	fmt.Println("Hello, world!")
-	// a, b := swap(10, 20)
-	// fmt.Println(a, b)
-	res, rem := dividir(10,3)
-	fmt.Println(res, rem)
+func main() {
+	f := func(a, b int) int {
+		return a + b
+	}
+
+	x := f(10, 20)
+	y := subtrair(30, 50)
+	z := sum(10, 2, 5)
+	fmt.Println(x, y, z)
 }
 
-func swap(a, b int) (int, int) {
-	return b, a
+func sum(nums ...int) int {
+	var out int
+	for _, n := range nums {
+		out += n
+	}
+
+	return out
 }
 
-func dividir(a, b int) (int, int) {
-	res := a / b
-	rem := a % b
-	return res, rem
+func subtrair(a, b int) int {
+	return a - b
+}
+
+func somar(a int) func(int) int {
+	return func(b int) int {
+		return a + b
+	}
 }

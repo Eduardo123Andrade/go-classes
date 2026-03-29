@@ -165,3 +165,81 @@ Não é uma boa pratica. Em codigos grandes fica dificil de entender
 a = 10 // atribui o valor 10 a variavel a
 
 a := 5 // atualiza o valor da variavel a para 5
+
+### High order function
+
+ˋˋˋ
+func main(){
+// x := somar(2)(1)
+f := somar(2)
+x := f(1)
+fmt.Println(x) // 3
+}
+
+func somar(a int) func(int) int {
+return func(b int) int {
+return a + b
+}
+}
+ˋˋˋ
+
+Funções podem retornar outras funcoes ou receber outras funções como parametro
+
+# clousures
+
+ˋˋˋ
+func somar(a int) func(int) int {
+return func(b int) int {
+return a + b
+}
+}
+ˋˋˋ
+
+são funções que capturam (usam) variaveis de um escopo acima do seu proprio.
+Nesse caso a função que esta sendo retornada usa a variavel b, do proprio escopo e a variavel a do escopo acima
+
+# funções anonimas
+
+ˋˋˋ
+func main(){
+// função anonima
+f := func(a, b int) int {
+return a + b
+}
+
+    x := f(10, 20)
+    y := subtrair(30, 50)
+    fmt.Println(x, y)
+
+}
+
+    // função nomeada
+    func subtrair(a, b int) int {
+    	return a - b
+    }
+
+ˋˋˋ
+São funções que não tem nome, nesse caso atribuimos a função anonima a variavel f e com isso, f passa a ser uma função
+
+referencia js:
+
+ˋˋˋ
+const soma = (a, b) => a + b
+ˋˋˋ
+OBS: Não é possivel declarar uma função nomeada dentro de outra função
+
+# Argumentos variaveis
+
+ˋˋˋ
+func sum(nums ...int) int {
+var out int
+for \_, n := range nums {
+out += n
+}
+
+    return out
+
+}
+ˋˋˋ
+
+a variavel nums pode ter 0 ou N valores, será tratado como "array" e deve ser o ultimo argumento da função
