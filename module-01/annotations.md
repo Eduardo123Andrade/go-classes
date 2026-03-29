@@ -80,6 +80,107 @@ pacote
 
 ## Variaveis
 
+    palavra reservada 'var' para declarar uma lista de variaveis
+
+    ```
+    	var nome, sobrenome string
+    ```
+
+
+    variavels de escopo de funcao precisam ser utilizadas, caso náo, vai ocorrer um erro de run time
+
+    ```
+        ./main.go:6:6: nome declared and not used
+        ./main.go:6:12: sobrenome declared and not used
+    ```
+
+    no entando variavies de pacote não precisam ser utilizadas
+
+    ```
+    package main
+
+import "fmt"
+
+var idate int
+
+func main() {
+var nome, sobrenome string
+
+    fmt.Println(nome, sobrenome)
+
+}
+
+```
+
+toda variavel é inicializada com o seu valor default caso não seja definido explicitamente
+
+em go o tipo da variavel pode ser infreido de acordo com seu valor
+
+```
+
+    # o compilador entende que é do tipo string
+    var nome, sobrenome = "Eduardo", "Andrade"
+
+```
+
+
+as variaveis podem ser declaradas de modo agrupado
+
+```
+
+    var (
+    	nome =  "Eduardo"
+    	sobrenome = "Andrade"
+    	idade = 29
+    )
+
+```
+
+variaveis podem ser declaradas sem o 'var'
+
+```
+
+    nome := "Eduardo"
+    sobrenome = "Andrade"
+
+```
+
+ao utilizar := estamos declarando de definindo o valor da variavel ao mesmo tempo.
+Se usarmos apenas o = estaremos apenas alterando o valor, nesse caso a variavel sobrenome nao existe, logo lanćará um erro
+
+```
+
+    nome := "Eduardo"
+    sobrenome = "Andrade"
+
+```
+
+esse tipo de atribuicão só pode ser feito no escopo de funćão, fora dele causará erro
+
+
+```
+
+package main
+
+import "fmt"
+
+var idade := 29
+
+func main() {
+
+    nome := "Eduardo"
+    sobrenome := "Andrade"
+
+    fmt.Println(nome, sobrenome, idade)
+
+}
+
+# myFirstGoProject
+
+./main.go:5:11: syntax error: unexpected :=, expected =
+
+```
+
 ### internal
 
 pacote
@@ -93,6 +194,8 @@ pacote
 a pasta internal é utilizada para funções e/ou variaveis que serão usadas dentro do mesmo pacote.
 
 porem se tentar importar algo da pastar internal fora do pacote, irá disparar um erro
+
+ao utilizar o := para declarar uma variavel, não é possivel definir o tipo, o tipo vai ser inferido pelo valor da variavel
 
 ### main
 
@@ -243,3 +346,13 @@ out += n
 ˋˋˋ
 
 a variavel nums pode ter 0 ou N valores, será tratado como "array" e deve ser o ultimo argumento da função
+
+```
+
+```
+
+```
+
+```
+
+```
