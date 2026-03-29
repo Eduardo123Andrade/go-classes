@@ -84,8 +84,8 @@ pacote
 
 pacote
 -> internal
-    -> foo -> package foo
-        -> variavel
+-> foo -> package foo
+-> variavel
 -> a.go -> package pacote
 -> b.go -> package pacote
 -> c.go -> package pacote
@@ -97,3 +97,71 @@ porem se tentar importar algo da pastar internal fora do pacote, irá disparar u
 ### main
 
 não é possivel importar nada do pacote main, ele serve apenas para criar o executavel
+
+### Funções
+
+ˋˋˋ
+func somar(a int, b int) int {
+return a + b
+}
+ˋˋˋ
+
+func -> define que é uma função
+somar -> nome da funcao
+(a int, b int) -> parametros da funcao
+int -> tipo de retorno da funcao
+
+caso o tipo dos parametros sejam o mesmo pode ser escrito assim
+
+ˋˋˋ
+func somar(a, b int) int {
+return a + b
+}
+ˋˋˋ
+
+nesse caso a e b sao do tipo inteiro
+essa abreviação o tipo deve estar no ultimo parametro.
+
+Funções em Go podem retornar mais de um valor
+
+ˋˋˋ
+func swap(a, b int) (int, int) {
+return b, a
+}
+ˋˋˋ
+
+ˋˋˋ
+func main() {
+a, b := swap(10, 20)
+fmt.Println(a, b) # a -> 20, b -> 10
+}
+ˋˋˋ
+
+ˋˋˋ
+func dividir(a, b int) (res int, rem int) {
+res := a / b
+rem := a % b
+return res, rem
+}
+ˋˋˋ
+a variavei res e rem sao declaradas na assinatura da função e tem seus valores atualizados no corpo
+
+# naked return
+
+ˋˋˋ
+func dividir(a, b int) (res int, rem int) {
+res := a / b
+rem := a % b
+return
+}
+ˋˋˋ
+
+Como as variaveis foram declaradas na assinatura, e atualizadas no corpo o return vazio automaticamente retorna as variaveis res e rem respectivamente
+
+Não é uma boa pratica. Em codigos grandes fica dificil de entender
+
+### Atribuição
+
+a = 10 // atribui o valor 10 a variavel a
+
+a := 5 // atualiza o valor da variavel a para 5
