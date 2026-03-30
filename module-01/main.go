@@ -1,13 +1,23 @@
 package main
 
-import "fmt"
-
-var idade := 29
+import (
+	"fmt"
+)
 
 func main() {
+	const x = 3
+	takeInt32(x)
+	takeInt64(x)
+}
 
-	nome := "Eduardo"
-	sobrenome := "Andrade"
+func takeFloat32(x float32) {
+	fmt.Println(x)
+}
 
-	fmt.Println(nome, sobrenome, idade)
+func takeInt32(x int32) {
+	fmt.Println(x)
+}
+
+func takeInt64(x int64) {
+	fmt.Println(x)
 }

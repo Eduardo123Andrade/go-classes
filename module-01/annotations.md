@@ -99,87 +99,78 @@ pacote
     ```
     package main
 
-import "fmt"
+    import "fmt"
 
-var idate int
+    var idate int
 
-func main() {
-var nome, sobrenome string
+    func main() {
+        var nome, sobrenome string
 
-    fmt.Println(nome, sobrenome)
+        fmt.Println(nome, sobrenome)
 
-}
-
-```
+    }
+    ```
 
 toda variavel é inicializada com o seu valor default caso não seja definido explicitamente
 
 em go o tipo da variavel pode ser infreido de acordo com seu valor
 
-```
+    ```
 
     # o compilador entende que é do tipo string
     var nome, sobrenome = "Eduardo", "Andrade"
 
-```
-
+    ```
 
 as variaveis podem ser declaradas de modo agrupado
 
-```
-
-    var (
-    	nome =  "Eduardo"
-    	sobrenome = "Andrade"
-    	idade = 29
-    )
-
-```
+    ```
+        var (
+            nome =  "Eduardo"
+            sobrenome = "Andrade"
+            idade = 29
+        )
+    ```
 
 variaveis podem ser declaradas sem o 'var'
 
-```
+    ```
 
     nome := "Eduardo"
     sobrenome = "Andrade"
 
-```
+    ```
 
 ao utilizar := estamos declarando de definindo o valor da variavel ao mesmo tempo.
 Se usarmos apenas o = estaremos apenas alterando o valor, nesse caso a variavel sobrenome nao existe, logo lanćará um erro
 
-```
-
-    nome := "Eduardo"
-    sobrenome = "Andrade"
-
-```
+    ```
+        nome := "Eduardo"
+        sobrenome = "Andrade"
+    ```
 
 esse tipo de atribuicão só pode ser feito no escopo de funćão, fora dele causará erro
 
+    ```
+        package main
 
-```
+        import "fmt"
 
-package main
+        var idade := 29
 
-import "fmt"
+        func main() {
 
-var idade := 29
+            nome := "Eduardo"
+            sobrenome := "Andrade"
 
-func main() {
+            fmt.Println(nome, sobrenome, idade)
 
-    nome := "Eduardo"
-    sobrenome := "Andrade"
+        }
 
-    fmt.Println(nome, sobrenome, idade)
+        # myFirstGoProject
 
-}
-
-# myFirstGoProject
-
-./main.go:5:11: syntax error: unexpected :=, expected =
-
-```
+        ./main.go:5:11: syntax error: unexpected :=, expected =
+    ```
 
 ### internal
 
@@ -322,6 +313,7 @@ return a + b
     }
 
 ˋˋˋ
+
 São funções que não tem nome, nesse caso atribuimos a função anonima a variavel f e com isso, f passa a ser uma função
 
 referencia js:
@@ -347,12 +339,138 @@ out += n
 
 a variavel nums pode ter 0 ou N valores, será tratado como "array" e deve ser o ultimo argumento da função
 
-```
+### tipode de variaveis
 
-```
+bool
 
-```
+int -> sigment int (negativo e positovo)
+uint -> unsigment int (positivos)
 
-```
+o tamanho depende da arquitetura, se a arquitetura para o qual tiver sendo compilado for 32 bits, vao ter 32 bits, se for 64 vao ter 64b its
 
-```
+int8, int16, int32, int64 (8, 16, 32, 64 bit respectivamente)
+
+uint8, uint16, uint32, uint64 (8, 16, 32, 64 bit respectivamente)
+
+uintptr -> u inter pointer
+
+Utilizado quando esta escrevendo codigo unsafe,
+por exemplo, integrações low level, integrações de codigo go com C
+
+byte -> o mesmo que uint8
+
+rune -> o mesmo que int32
+-> utilizado para representar caracteres
+
+float32 float64
+
+complex64 complex128
+
+ao converter um inteiro para string é convertido para o valor na tabela ASCII, e não a string numerica
+
+ˋˋˋ
+func main(){
+var x = 65
+// conversion from int to string yields a string of one rune, not a string of digits
+s := string(x)
+fmt.Println(s) // A ->caracterer na tabela ASCII
+}
+ˋˋˋ
+
+para converter um valor para a string literal deve usar o pacote strconv
+
+ˋˋˋ
+func main() {
+x := 65
+s := strconv.FormatInt(int64(x), 10)
+fmt.Println(s)
+}
+ˋˋˋ
+
+convertemos o numero para int 64 bits, na base decimal e pegamos esse valor e convertemos para string
+
+## contants
+
+utiliza a palavra reservada 'const' e seu valor nao pode ser mudado, e é possivel compilar o projeto mesmo se a constante não tiver sendo utilizada, diferentemente das variaveis que causa erro de compilação se não forem utilizadas
+
+ˋˋˋ
+const x int = 10
+ˋˋˋ
+
+apenas os tipos de caractere pode ser uma cosntante: rune, byte, string, bool, e qualquer tipo numerico
+Não pode usar short sintax (:=) para declarar uma constante.
+
+As constantes sao unsigned type, ou seja, não tem tipo explicito, elas definem o tipo de acordo com o contexto
+
+ˋˋˋ
+func main() {
+const x = 10
+takeInt32(x)
+takeInt64(x)
+}
+
+func takeInt32(x int32) {
+fmt.Println(x)
+}
+
+func takeInt64(x int64) {
+fmt.Println(x)
+}
+ˋˋˋ
+
+Nesse caso funciona pq ambos do da familia do int
+
+constant literal -> Magic number
+
+ˋˋˋ
+func main() {
+takeInt32(10)
+takeInt64(10)
+}
+
+func takeInt32(x int32) {
+fmt.Println(x)
+}
+
+func takeInt64(x int64) {
+fmt.Println(x)
+}
+ˋˋˋ
+
+Não é possivel passar uma const float para funções do tipo int, mas inverso é permitido
+
+ˋˋˋ
+func main() {
+const x = 3.14
+#cannot use x (untyped float constant 3.14) as int64 value in argument to takeInt64
+takeInt32(x)
+takeInt64(x)
+}
+
+func takeInt32(x int32) {
+fmt.Println(x)
+}
+
+func takeInt64(x int64) {
+fmt.Println(x)
+}
+ˋˋˋ
+ˋˋˋ
+func main() {
+const x = 3
+takeInt32(x)
+takeInt64(x)
+}
+
+func takeFloat32(x float32) {
+fmt.Println(x)
+}
+
+func takeInt32(x int32) {
+fmt.Println(x)
+}
+
+func takeInt64(x int64) {
+fmt.Println(x)
+}
+ˋˋˋ
