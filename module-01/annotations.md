@@ -661,3 +661,58 @@ default:
     fmt.Println("default")
 }
 ``` 
+
+### defer
+
+Adia uma chamda de função até que a função que a chamou termine
+```
+func main() {
+    defer fmt.Println("1")
+    fmt.Println("2")
+    fmt.Println("3")
+}
+```
+
+Saida:
+```
+2
+3
+1
+```
+
+os defer sao executados em ordem inversa, ou seja, o ultimo defer a ser chamado é o primeiro a ser executado
+
+```
+func main() {
+    defer fmt.Println("1")
+    defer fmt.Println("2")
+    defer fmt.Println("3")
+}
+```
+
+Saida:
+```
+3
+2
+1
+```
+
+os argumentos passados para funcao defer sao avaliados imediatamente, mas a funcao só é chamada depois que a funcão principal terminar
+
+
+```
+func main() {
+    x := 10
+    defer func(y int) {
+        fmt.Println(y)
+    }(x)
+    x = 20
+    fmt.Println(x)
+}
+```
+
+Saida:
+```
+20
+10
+```
