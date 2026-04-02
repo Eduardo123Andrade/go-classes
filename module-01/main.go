@@ -5,19 +5,15 @@ import (
 )
 
 func main() {
-	const x = 3
-	takeInt32(x)
-	takeInt64(x)
-}
+	arr1 := [3]int{}
+	arr2 := [3]int{1, 2, 3}
+	arr3 := [10]int{5: 400, 7: 300}
 
-func takeFloat32(x float32) {
-	fmt.Println(x)
-}
+	const x = 10
+	arry := [x]int{}
 
-func takeInt32(x int32) {
-	fmt.Println(x)
-}
-
-func takeInt64(x int64) {
-	fmt.Println(x)
+	fmt.Println(arr1)
+	fmt.Println(arr2)
+	fmt.Println(arr3)
+	fmt.Println(arry)
 }

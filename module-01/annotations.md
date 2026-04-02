@@ -474,3 +474,32 @@ func takeInt64(x int64) {
 fmt.Println(x)
 }
 ˋˋˋ
+
+### arrays
+
+o tamnho tem que ser constante
+
+ˋˋˋ
+arr1 := [3]int{}
+arr2 := [3]int{1, 2, 3}
+ˋˋˋ
+
+é possivel definir qual posição vai receber determiado elemento
+
+ˋˋˋ
+arr3 := [10]int{5: 400, 7: 300}
+ˋˋˋ
+
+**NAO** podemos definir o tamanho de um array usando uma **variavel**. O tamanho do array deve ser sabido em tempo de compilação
+
+ˋˋˋ
+x:= 10
+arry :=[x]int{}
+ˋˋˋ
+
+Porem **PODE-SE** usar **constantes** para definir o tamanho do array
+
+ˋˋˋˋ
+const x = 10
+arry := [x]int{}
+ˋˋˋ
