@@ -1,19 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 )
 
 func main() {
-	arr1 := [3]int{}
-	arr2 := [3]int{1, 2, 3}
-	arr3 := [10]int{5: 400, 7: 300}
+	fmt.Println("Hello, World")
 
-	const x = 10
-	arry := [x]int{}
+	fmt.Println("O programa terminou.")
 
-	fmt.Println(arr1)
-	fmt.Println(arr2)
-	fmt.Println(arr3)
-	fmt.Println(arry)
+	// Faz o programa esperar até que você aperte ENTER
+	fmt.Println("Pressione ENTER para sair...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }

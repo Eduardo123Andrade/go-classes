@@ -503,3 +503,74 @@ Porem **PODE-SE** usar **constantes** para definir o tamanho do array
 const x = 10
 arry := [x]int{}
 ˋˋˋ
+
+### Loops
+
+## for
+
+para o for, não é necessario parenteses (causa erro de compilaćao)
+
+```
+for i := 0; i < 10; i++ {
+    fmt.Println(i)
+}
+```
+
+todos o statmetns sao opcionais
+
+```
+i :=  1
+for ; i < 10;{
+    fmt.Println(i)
+    i++
+}
+```
+
+Inclusive a condićão que, caso nao seja definida, vai executar o for infinitamente
+
+```
+i :=  1
+for {
+    fmt.Println(i)
+    i++
+}
+```
+
+## range loop
+
+```
+arr := [10]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+for range arry {
+    // Codigo executado para cada elemento dentro do array
+    fmt.Println("run")
+}
+
+```
+
+o range retorna dois elementos, o index e o elemento, respectivamente.
+
+```
+for i, elem range arry {
+    fmt.Println(i, elem)
+}
+```
+
+porem, utilizando **blank identifier** (\_), podemos ignorar o primeiro elemento
+
+```
+for _, elem range arry {
+    fmt.Println(elem)
+}
+```
+
+## version 1.22+
+
+range sob um valor inteiro
+
+```
+for i := range 10 {
+    fmt.Println(i)
+}
+```
+
+dessa forma o range vai fazer o loop executar 10x, porem so retorna um elemento que é o valor da execucao atual, 1 - 10 nesse exemplo
