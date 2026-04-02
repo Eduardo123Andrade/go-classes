@@ -574,3 +574,90 @@ for i := range 10 {
 ```
 
 dessa forma o range vai fazer o loop executar 10x, porem so retorna um elemento que é o valor da execucao atual, 1 - 10 nesse exemplo
+
+### if
+
+assim como no for, não é necessario parenteses
+
+```
+x := 10
+if x > 5 {
+    fmt.Println(x)
+}
+```
+
+e caso seja necessario é possivel declarar variaveis dentro do statemnet do if
+
+```
+if x := 10; x > 5 {
+    fmt.Println(x)
+}
+```
+porem so vai existir no escopo do if
+
+### switch
+
+tambem nao precisa de parenteses e o break é implicito, caso coloque receberar um alerta de duplicidade, mas o compilador nao quebra
+
+```
+switch x {
+case 1:
+    fmt.Println("1")
+case 2:
+    fmt.Println("2")
+default:
+    fmt.Println("default")
+}
+```
+
+e é possivel fazer com o que o case subsequente ao selecionado seja executado, utilizando a palavra reservada 'fallthrough'
+
+```
+x := 1
+switch x {
+case 1:
+    fmt.Println("1")
+    fallthrough
+case 2:
+    fmt.Println("2")
+default:
+    fmt.Println("default")
+}
+``` 
+no caso acima o 1 e o 2 serao impressos
+
+
+é possivel, tambem, fazer com que o switch nao tenha uma variavel e sim uma expressao em cada case
+
+```
+switch {
+case x > 5:
+    fmt.Println("x é maior que 5")
+case x < 5:
+    fmt.Println("x é menor que 5")
+default:
+    fmt.Println("x é igual a 5")
+}
+```
+
+é possivel declarar variaveis dentro do statemnet do switch
+
+```
+switch x := 10; x > 5 {
+case true:
+    fmt.Println("x é maior que 5")
+case false:
+    fmt.Println("x é menor que 5")
+}
+```
+
+tambem é possivel ter mais de uma expressao em um mesmo case
+
+```
+switch x {
+case 1, 2, 3:
+    fmt.Println("1, 2 ou 3")
+default:
+    fmt.Println("default")
+}
+``` 
