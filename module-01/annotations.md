@@ -593,6 +593,7 @@ if x := 10; x > 5 {
     fmt.Println(x)
 }
 ```
+
 porem so vai existir no escopo do if
 
 ### switch
@@ -623,9 +624,9 @@ case 2:
 default:
     fmt.Println("default")
 }
-``` 
-no caso acima o 1 e o 2 serao impressos
+```
 
+no caso acima o 1 e o 2 serao impressos
 
 é possivel, tambem, fazer com que o switch nao tenha uma variavel e sim uma expressao em cada case
 
@@ -660,11 +661,12 @@ case 1, 2, 3:
 default:
     fmt.Println("default")
 }
-``` 
+```
 
 ### defer
 
 Adia uma chamda de função até que a função que a chamou termine
+
 ```
 func main() {
     defer fmt.Println("1")
@@ -674,6 +676,7 @@ func main() {
 ```
 
 Saida:
+
 ```
 2
 3
@@ -691,6 +694,7 @@ func main() {
 ```
 
 Saida:
+
 ```
 3
 2
@@ -698,7 +702,6 @@ Saida:
 ```
 
 os argumentos passados para funcao defer sao avaliados imediatamente, mas a funcao só é chamada depois que a funcão principal terminar
-
 
 ```
 func main() {
@@ -712,6 +715,7 @@ func main() {
 ```
 
 Saida:
+
 ```
 20
 10
