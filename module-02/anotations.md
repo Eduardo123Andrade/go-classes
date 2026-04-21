@@ -69,3 +69,179 @@ qunado usar: - Quando queremos mudar o valor alocado na memoria - quando nao que
 \*int -> Ponteiro de inteiro (tipo de dado)
 
 \*X -> derreferencia (pega o valor alocado na memoria daquele ponteiro)
+
+### Struct
+
+São coleções de dados definido da seguinte maneira:
+
+ˋˋˋ
+type User string {
+Name string
+ID uint64  
+}
+ˋˋˋ
+
+podemos instanciar uma struct das seguintes maneiras
+
+ˋˋˋ
+user := User{}
+ˋˋˋ
+Caso não definamos os valores de cada atributo, vai ser setado o valor padrao ('', 0) respectivamente no exemplo acima
+
+ˋˋˋ
+user := User{"Teste", 10}
+ˋˋˋ
+onde passando apenas os valores **na ordem** definida na struct, logo, nao precisamos explicitar a qual tributo ele pertence
+
+ˋˋˋ
+user := User{Id: 10, Name: "Teste"}
+ˋˋˋ
+
+onde explicitamos a quais atributos vao ser atribuido os valores, porem **não** precisamos seguir uma ordem exata na atribuição
+
+ˋˋˋ
+user := User{Name: "Teste"}
+ˋˋˋ
+
+e por fim definir parcialmente os atributos com valores, o que nao foram definidos vao ter o valor padrao
+
+OBS.:
+
+Não é possivel misturar declaração explicita com declaração ralativa
+
+ˋˋˋ
+user := User{Name: "Teste", 0}
+// mixture of field:value and value elements in
+//struct literalcompilerMixedStructLit
+ˋˋˋ
+
+Para acessar algum dos valores basta apenas sar o .
+
+ˋˋˋ
+func main() {
+user := User{Name: "Teste", Id: 0}
+fmt.Println(user.Name)
+}
+ˋˋˋ
+
+## Declaração de metodos para tipos
+
+É possivel declarar um metodo para qualquer tipo, desde que, estejam no mesmo pacote.
+
+a declaração do metodo é feita iqual a uma função, porem é passado o tipo que vai receber esse metodo
+
+ˋˋˋ
+func (User) print () {
+fmt.Println("foo")
+}
+ˋˋˋ
+
+caso deseje interagir com os valores dos tipo que o metodo foi atribuido devesse usar uma variavel, a recomendação da comunidade é que o nome da variavel seja as iniciais do tipo no nosso caso (u)
+
+ˋˋˋ
+
+func (u User) print() {
+fmt.Println(u.Name)
+}
+ˋˋˋ
+
+OBS.: Um metodo **não** pode ter mias de um recebedor
+
+ˋˋˋ
+// method has multiple receivers
+func (u User, u2 User2) print() {
+fmt.Println(u.Name)
+}
+ˋˋˋ
+
+## Atualizando valores de um tipo atrave de um metodo declarado
+
+ˋˋˋ
+type User struct {
+Name string
+Id uint64
+}
+
+func (u User) UpdateName(name string) {
+u.Name = name
+}
+
+func main() {
+user := User{Name: "Teste", Id: 0}
+user.UpdateName("Pedro")
+fmt.Println(user.Name) // "Teste"
+}
+ˋˋˋ
+
+O valor acima não mudou, pois a declaração ˋˋˋfunc (u User) UpdateName(name string) ˋˋˋ faz uma **copia** da variavel ˋˋˋuserˋˋˋ.
+
+Para que possamos atualizar o valor da propria variavel que chama o metodo precisamos usar **pointer indirection**
+
+ˋˋˋˋ
+func (u \*User) UpdateName(name string)
+ˋˋˋ
+
+onde dizemos que vamos apontar para o local da memoria onde aquela variavel esta.
+
+ˋˋˋ
+func main() {
+user := User{Name: "Teste", Id: 0}
+user.UpdateName("Pedro")
+fmt.Println(user.Name) // "Pedro"
+}
+ˋˋˋ
+
+Desta maneira a função consegue alterar a variavel corretamente
+
+## Embedded types
+
+É a maneira atribuir os atributos e funcoes de uma struct em outra
+
+ˋˋˋ
+// foo/foo.go
+
+type Foo struct {}
+
+func (f Foo) Bar {}
+ˋˋˋ
+
+ˋˋˋ
+// outro pacote
+type User string {
+foo.Foo // Embedded type
+Name string
+ID uint64  
+}
+ˋˋˋ
+
+Nesse caso, o tipo **User** tem todos os atributos e metodos de **Foo**.
+
+ˋˋˋ
+user := User{}
+user.Bar()
+ˋˋˋ
+
+##struct tags
+
+São tags que indicam para outros pacote como "lidar" com os atributos
+
+ˋˋˋ
+type User struct {
+Name string `json:"name"`
+Id uint64 `json:"id"`
+}
+ˋˋˋ
+
+sem as tags o resultado é
+
+ˋˋˋ
+res, err := json.Marshal(user)
+if(err != nil){
+panic(err)
+}
+fmt.Println(string(res))
+//{"Name":"Teste","Id":0}
+ˋˋˋ
+com os atributos captalizado.
+
+resultado apos as tags: ˋˋˋ{"name":"Teste","id":0}ˋˋˋ

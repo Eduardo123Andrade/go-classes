@@ -1,13 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type User struct {
+	Name string `json:"name"`
+	Id   uint64 `json:"id"`
+}
+
+func (u User) UpdateName(name string) {
+	u.Name = name
+}
 
 func main() {
-	m := make(map[string]string)
-	m["Pedro"] = "Pessoa"
-	m["foo"] = "bar"
-
-	for k, v := range m {
-		fmt.Println(k, v)
+	user := User{Name: "Teste", Id: 0}
+	user.UpdateName("Pedro")
+	
+	res, err := json.Marshal(user)
+	
+	if(err != nil){
+		panic(err)
 	}
+
+	fmt.Println(string(res))
 }
