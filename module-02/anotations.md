@@ -245,3 +245,157 @@ fmt.Println(string(res))
 com os atributos captalizado.
 
 resultado apos as tags: ˋˋˋ{"name":"Teste","id":0}ˋˋˋ
+
+# Interface
+
+Contrato que diz como uma variavel deve ser atribuida
+
+ˋˋˋˋ
+type Animal interface {}
+ˋˋˋ
+
+a partir da versão 1.18, o go ganhou um alias para interface fazia chamado _any_
+
+ˋˋˋ
+func foo(x interface{}){}
+func bar(x any){}
+ˋˋˋ
+
+A interfaces podem ser implementadas indiretamente, caso uma variavel tenha todos os metodos e atributos que a _itnerface_ exige, a variavel implementa indiretamente essa interface.
+
+ˋˋˋ
+type Animal interface {
+Sound() string
+}
+
+type Dog struct{}
+
+func (Dog) Sound() string {
+return "Au! Au!"
+}
+
+func whatDoesThisAnimalSay(a Animal) {
+fmt.Println(a.Sound())
+}
+
+func main() {
+dog := Dog{}
+
+    whatDoesThisAnimalSay(dog) //Au! Au!
+
+}
+ˋˋˋ
+
+mesmo sem uma keyword _implements_ o go implementa automaticamente a interface
+
+ˋˋˋ
+type Animal interface {
+Sound() string
+}
+
+type Dog struct{}
+
+func (Dog) Bark() string {
+return "Au! Au!"
+}
+
+func whatDoesThisAnimalSay(a Animal) {
+fmt.Println(a.Sound())
+}
+
+func main() {
+dog := Dog{}
+
+    whatDoesThisAnimalSay(dog)
+
+}
+ˋˋˋ
+
+porem nesse novo bloco, o metodo atribuido é o **Bark** e nao mais **Sound**, então o compilador alerta um erro: _cannot use dog (variable of struct type Dog) as Animal value in argument to whatDoesThisAnimalSay: Dog does not implement Animal (missing method Sound)_
+
+No codigo abaixo a variavel _a_ é iniciada como nula e depois passa a servir de referencia a um ponteiro que aponta para nil, "mantendo" a variavel _a_ como "nula"
+
+OBS.: Só é possivel pois estamos lidando com ponteiros
+
+ˋˋˋ
+type Animal interface {
+Sound() string
+}
+
+type Dog struct{
+Name string
+}
+
+func (d \*Dog) Sound() string {
+fmt.Println(d.Name)
+return "Au! Au!"
+}
+
+func whatDoesThisAnimalSay(a Animal) {
+fmt.Println(a.Sound())
+}
+
+func main() {
+var a Animal // nil
+var dog \*Dog // nil
+a = dog // not nil
+whatDoesThisAnimalSay(a) // Au! Au!
+}
+ˋˋˋ
+
+Mas em **Go** podemos executar funções de _reciveirs_ nulos, desde que não utilizemos internamente algum atributo desse receiver, pois dessa maneira dipararia um _panic_: "panic: runtime error: invalid memory address or nil pointer dereference"
+
+Isso só é possivel pois estamos lidando com ponteiros, caso tentarmos executar a funcao diretamente da interface nula teremos um panic:
+
+ˋˋˋ
+func main(){
+var a Animal
+//panic: runtime error: invalid memory address or nil pointer dereference
+fmt.Println(a.Sound())
+}
+ˋˋˋ
+
+Interfaces vazias são implementadas por qualquer variavel, pois essas interfaces não tem atributos
+
+# Type assertion
+
+em Go podemos verificar o tipo da variavel usando o seguinte codigo ˋˋstr, ok := a.(string)ˋˋ
+
+o ok serve para garantir que o tipo que estamos tentando fazer o _assertion_ é realmente uma string, se nao for o ok vai ser _false_, caso nao seja feita a validação do ok, vai causar panic: _interface conversion: interface {} is int, not string_
+
+## Switch case de tipos
+
+ˋˋˋ
+type Animal interface {
+Sound() string
+}
+
+type Dog struct{
+Name string
+}
+
+type Cat struct {}
+
+func (d \*Dog) Sound() string {
+return "Au! Au!"
+}
+
+func (c \*Cat) Sound() string {
+return "Miau!"
+}
+
+func takeAnimal(a Animal) (x string) {
+x = "<nil>"
+switch t := a.(type) {
+case *Dog:
+x = t.Sound()
+case *Cat:
+x = t.Sound()
+}
+
+    return
+
+}
+ˋˋˋ
+
+usando a keyword _type_ podemos pegar dinamicamente o tipo da variavel _a_ para utilizarmos nos cases do swtich

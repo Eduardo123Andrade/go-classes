@@ -1,28 +1,52 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
-type User struct {
-	Name string `json:"name"`
-	Id   uint64 `json:"id"`
+type Animal interface {
+	Sound() string
 }
 
-func (u User) UpdateName(name string) {
-	u.Name = name
+type Dog struct{
+	Name string
+}
+
+type Cat struct {}
+
+func (d *Dog) Sound() string {
+	return "Au! Au!"
+}
+
+func (c *Cat) Sound() string {
+	return "Miau!"
+}
+
+func takeAnimal(a Animal) (x string) {
+	x = "<nil>"
+	switch t := a.(type) {
+	case *Dog:
+		 x = t.Sound()
+	case *Cat:
+		x = t.Sound()
+	}
+
+	return
+}
+
+func whatDoesThisAnimalSay(a Animal) {
+	fmt.Println(a.Sound())
+}
+
+func takeString(a any) {
+	str:= a.(string)
+	fmt.Println(str)
 }
 
 func main() {
-	user := User{Name: "Teste", Id: 0}
-	user.UpdateName("Pedro")
-	
-	res, err := json.Marshal(user)
-	
-	if(err != nil){
-		panic(err)
-	}
-
-	fmt.Println(string(res))
+	c := Cat{}
+	sound := takeAnimal(&c)
+	fmt.Println(sound)
+	// var a Animal
+	// fmt.Println(a.Sound())
 }
