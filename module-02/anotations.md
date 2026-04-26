@@ -636,3 +636,185 @@ e consguimos fazer o match do erro com o `errors.Is()`
 
 `fmt.Println(errors.Is(err, ErrQualquer)) //true`
 `fmt.Println(errors.Is(err, ErrQualquer2)) //true`
+
+# Generico (parametos de tipo)
+
+```
+func foo [T any](arg T) {
+	fmt.Println(arg)
+}
+```
+
+Sempre que fo usa gererics em Go, deve passar uma constraint, por padrão usa-se _any_ para poder aceitar qualquer coisa.
+
+## diferenca em parametro de tipo e parametro de funcao
+
+### Parametro generico de funcao
+
+em parametros de funcao genericos _any_ `func bar(arg any){}`, o tipo é uma interface `type any = interface{}`, o tipo é definido em _run time_ e temos que fazer _type assestion_ para não quebrar a aplicaćão.
+
+```
+var i interface{} = "hello"
+s := i.(string) // s is "hello"
+f := i.(float64) // panic: interface conversion: interface {} is string, not float64
+
+
+s, ok := i.(string)
+if ok {
+    fmt.Println("Value is a string:", s)
+} else {
+    fmt.Println("Not a string")
+}
+
+switch v := i.(type) {
+case int:
+    fmt.Printf("Twice %v is %v\n", v, v*2)
+case string:
+    fmt.Printf("%q is %v bytes long\n", v, len(v))
+default:
+    fmt.Printf("Unknown type %T!\n", v)
+}
+```
+
+### parametro de tipo
+
+Já os parametros de tipo `func foo[T any](arg T){}` `type parameter T any` são definidos em _compiler time_, ou sejá o projeto não consegue buildar se o tipo passado para funcao não estiver correto, evitando a necessidade de fazer _type assertion_
+
+```
+func main() {
+	foo("a")
+	foo(123)
+	foo([]int{1})
+
+}
+
+func foo[T any](arg T) {
+	fmt.Println(arg)
+}
+```
+
+porem ao mudar o T para o tipo _comparable_, o compilador já alerta erro:
+
+func main() {
+foo("a")
+foo(123)
+// []int does not satisfy comparable
+foo([]int{1})
+
+}
+
+func foo[T comparable](arg T) {
+fmt.Println(arg)
+}
+
+## Custom Contraint
+
+As constraint nada mais são que interfaces
+
+```
+type MeuTipo string
+
+func (MeuTipo) Foo() {}
+func (MeuTipo) Bar() {}
+
+type MyConstraint interface {
+	Foo()
+}
+
+func main() {
+	var mt MeuTipo = ""
+	foo(mt)
+}
+
+func foo[T MyConstraint](arg T) {
+	fmt.Println(arg)
+}
+```
+
+entao se eu defino uma interface customizada como constraint, e algum tipo "implementa" aquela interface, então esse tipo é aceito pelo generics (_mesmo que esse tipo implemente outras interfaces_)
+
+## Definir tipos aceitaveis
+
+Ao inves de aceitar um unico tipo, em Go, podemos fazer com o generic aceite tipos especificos
+
+```
+type MyConstraint interface {
+	int | string | []int
+}
+```
+
+dessa maneria esse codigo é completamente aceito
+
+```
+func main() {
+	foo("a")
+	foo(1)
+	foo([]int{1})
+}
+```
+
+porem se eu definir um tipo onde o _core type_ dele é uma string `type MeuTipo string` o codigo não aceita, pois _MeuTipo_ é do tipo MeuTipo e não string, mesmo que por baixo dos panos seja uma string
+
+para que seja possivel aceitar _core types_ usamos o **~**
+
+```
+type MyConstraint interface {
+	int | ~string | []int
+}
+```
+
+dessa maneira eu digo qualquer string seja ela a padrao ou core type é aceito em MyConstraint
+
+## Genereic em estrutura
+
+```
+type MyStruct[T any] struct {
+	Foo T
+}
+
+func main() {
+	// cannot use generic type MyStruct[T any] without instantiation
+	var ms MyStruct = MyStruct{}
+}
+```
+
+Quando criamos uma struct com generics, somos obrigados a incializar essa struct `var ms MyStruct[string] = MyStruct[string]{}`
+
+### Metodos para estruturas genericas
+
+`func (MyStruct[T]) foo() {}` funciona da mesma maneira que a atribuicao a uma struct normal, porem. a funcão atribuida não pode ter parametros de tipo diferentes do tipo da struct `func (MyStruct[T]) foo[A any](a A) {}` -> method must have no type parameters
+
+porem, se o tipo for o mesmo da estrutura é permitido `func (MyStruct[T]) foo(a T) {}`
+
+## Limitacoes
+
+Mesmo que dois tipos implemente Funcoes com o mesmo nome, em um metodo generico nao é possivel acessar essa funcão
+
+```
+type Foo struct {}
+
+func (Foo) Fazer() {}
+
+type Bar struct {}
+
+func (Bar) Fazer() {}
+
+func foo[T interface {Bar | Foo}](arg T) {
+	arg.Fazer() // arg.Fazer undefined (type T has no field or method Fazer)
+}
+```
+
+para que seja possivel, restringir esse generic a um tipo especifico e poder acessa a funcao que esses tipos implementam é necessario declarar uma interface explicitamente
+
+```
+type MyInterface interface {
+	Foo | Bar
+	Fazer()
+}
+
+func foo[T MyInterface](arg T) {
+	arg.Fazer()
+}
+```
+
+Dessa maneira o compilador sabe que o parametro daquela funcao é do tipo Foo ou Bar e implementa a funcao Fazer

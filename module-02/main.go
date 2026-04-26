@@ -1,38 +1,24 @@
 package main
 
-import (
-	"errors"
-	"fmt"
-)
-
 func main() {
-	err := foo()
-	fmt.Println(err)
-	fmt.Println(errors.Is(err, ErrQualquer))
-	fmt.Println(errors.Is(err, ErrQualquer2))
-
+	foo(Foo{})
+	foo(Bar{})
 }
 
-var (
-	ErrQualquer  = errors.New("Erro")
-	ErrQualquer2 = errors.New("Erro 2")
-)
+type Foo struct{}
 
-func a() error { return ErrQualquer }
-func b() error { return ErrQualquer2 }
+func (Foo) Fazer() {}
 
-func foo() error {
-	var errorRetults error
+type Bar struct{}
 
-	if err := a(); err != nil {
-		errorRetults = errors.Join(errorRetults, err)
-	}
+func (Bar) Fazer() {}
 
-	if err := b(); err != nil {
-		errorRetults = errors.Join(errorRetults, err)
+type MyInterface interface {
+	Foo | Bar
+	Fazer()
+}
 
-	}
-
-	return errorRetults
-
+// func foo[T MyInterface](arg T) {
+func foo[T MyInterface](arg T) {
+	arg.Fazer()
 }
