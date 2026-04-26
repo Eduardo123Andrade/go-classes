@@ -1,52 +1,38 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
-type Animal interface {
-	Sound() string
+func main() {
+	err := foo()
+	fmt.Println(err)
+	fmt.Println(errors.Is(err, ErrQualquer))
+	fmt.Println(errors.Is(err, ErrQualquer2))
+
 }
 
-type Dog struct{
-	Name string
-}
+var (
+	ErrQualquer  = errors.New("Erro")
+	ErrQualquer2 = errors.New("Erro 2")
+)
 
-type Cat struct {}
+func a() error { return ErrQualquer }
+func b() error { return ErrQualquer2 }
 
-func (d *Dog) Sound() string {
-	return "Au! Au!"
-}
+func foo() error {
+	var errorRetults error
 
-func (c *Cat) Sound() string {
-	return "Miau!"
-}
-
-func takeAnimal(a Animal) (x string) {
-	x = "<nil>"
-	switch t := a.(type) {
-	case *Dog:
-		 x = t.Sound()
-	case *Cat:
-		x = t.Sound()
+	if err := a(); err != nil {
+		errorRetults = errors.Join(errorRetults, err)
 	}
 
-	return
-}
+	if err := b(); err != nil {
+		errorRetults = errors.Join(errorRetults, err)
 
-func whatDoesThisAnimalSay(a Animal) {
-	fmt.Println(a.Sound())
-}
+	}
 
-func takeString(a any) {
-	str:= a.(string)
-	fmt.Println(str)
-}
+	return errorRetults
 
-func main() {
-	c := Cat{}
-	sound := takeAnimal(&c)
-	fmt.Println(sound)
-	// var a Animal
-	// fmt.Println(a.Sound())
 }

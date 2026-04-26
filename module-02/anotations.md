@@ -399,3 +399,240 @@ x = t.Sound()
 ˋˋˋ
 
 usando a keyword _type_ podemos pegar dinamicamente o tipo da variavel _a_ para utilizarmos nos cases do swtich
+
+# Erros
+
+Erros são interfaces que existe por padrão na linguagem, essa funcõe guardam valores
+
+```
+// Interface padrão de erro em Go
+type error interface {
+    Error() string
+}
+```
+
+Quando uma funcão erra não é disparado um erro, nem um _panic_ , ou seja não existe `throw new Error()` como em outras linguagens
+ou `panic()`
+
+_panic só pode ser usado quando o programa não pode mais continuar e idealmente não deve ser usado, deve retornar um erro para que, quem chamou a funcão
+decisa o que deve ser feito_
+
+uma funćao em go pode retonar mais um valor, como já foi dito anteriormente, então os erros são _retornados_ na funcão e não disparam uma excecao
+
+```
+func dividir(a, b int) (int, error) {
+	if b == 0 {
+		return 0, errors.New("Não pode dividir por 0")
+	}
+
+	return a / b, nil
+}
+```
+
+Pela convencão, caso seja necessario retornar um erro, devemos retornar a _valor default_ do valor, nesse caso `return 0, erro`
+
+```
+func main(){
+	a := 10
+	b := 0
+
+	res, err := dividir(a, b)
+
+	if err != nil {
+		 fmt.Println(err)
+		 return
+	}
+
+	fmt.Println(res)
+
+}
+```
+
+e a funćão que chamou a funcão dividir, deve tratar com erro retornado da maneria que desejar
+
+## Erros customizados
+
+```
+type SqrtError struct {
+	msg string
+}
+
+func (s SqrtError) Error() string {return s.msg}
+
+func raizQuadrada(x float64) (float64, error) {
+	if x < 0 {
+		return 0, SqrtError{"Não exite raiz quadrada de numero negativo"}
+	}
+
+	return math.Sqrt(x), nil
+}
+```
+
+em outras linguagens teriamos `class CustomError extends Error {}`, porem em Go, eu crio uma estrutura para o meu erro customizado `type CustomError struct {}`
+
+e atribuo a funcão Error a essa struct `func (s SqrtError) Error() string {return "Erro customizado"}`, como um erro deve implemetnar a inteface erro do Go que possui o metodo `Error() string`, então apos a a atribuićão do erro a minha struct CustomError, essa struct pode ser usada em "validacões" de erros em Go
+
+## Validacóes
+
+### errors.is
+
+Esse tipo de validacão verifica se o erro passado é um erro originado do `errors.New()` (_erros padrões de Go_)
+
+```
+type SqrtError struct {
+	msg string
+}
+
+func (s SqrtError) Error() string { return s.msg }
+
+var ErrNotFound = errors.New("not found")
+
+func main() {
+
+	err := foo()
+
+	if err != nil && errors.Is(err, ErrNotFound) {
+		fmt.Println("Error not found")
+		return
+	}
+
+	fmt.Println("Fora do if")
+
+}
+
+func foo() error { return ErrNotFound }
+```
+
+Nesse caso eu estou comparando o erro em si e não o tipo, ou seja _ErrNotFound_ é um tipo não uma interface, entao eu verifico no meu if, se o erro retornado pela funcão é um erro igual ao ErrNotFound "parecido com 1 == 1".
+
+### errors.as
+
+```
+type SqrtError struct {
+	msg string
+}
+
+func (s SqrtError) Error() string { return s.msg }
+
+var ErrNotFound = errors.New("not found")
+
+func main() {
+
+	err := foo()
+	var sqrtError SqrtError
+
+	if err != nil && errors.As(err, &sqrtError) {
+		fmt.Println(sqrtError.msg)
+		return
+	}
+
+	fmt.Println("Fora do if")
+
+}
+
+func foo() error { return SqrtError{"teste"} }
+```
+
+a funcão As precisa receber o erro e um ponteiro, para que, caso encontre o erro na error tree (em outras linguagens: _Error stack_) , vai mutar a variavel para o erro encontrado.
+ou seja, caso enconter algum erro _SqrtError_ na arvore, vai apontar esse erro para a variavel _sqrtError_, para que possamos acessar seus atributos e funcões se necessario `srqtError.msg`
+
+OBS.: Mesmo que minha funcao seja um _pointer receiver_ `func (s *SqrtError) Error() string { return s.msg }`, ainda sim, precisamos passar um um ponteiro para o `errors.As(err, &somePointerError)`
+
+### Quando usar CustomError struct ou erros.New
+
+Sempre que precisar armazenar valores no erro: _input, messagem, codigo, descricão_, usamos uma _struct_
+
+caso precisamos apenas de um erro simples, usamos _errors.New()_
+
+### Error wraping
+
+Erros que contem varios erros
+
+```
+func main() {
+	err := foo()
+
+	if err != nil && errors.Is(err, CustomError) { // false
+		fmt.Println("deu erro:", err)
+		return
+	}
+
+}
+
+var CustomError = errors.New("error")
+
+func foo() error {
+	err := bar()
+	if err != nil {
+		return errors.New("deu erro em foo " + err.Error())
+	}
+	return nil
+}
+
+func bar() error { return CustomError }
+```
+
+Nesse acaso err não é um CustomErro, por mais que seja retornado um CustomError pela funcao _bar_, o CustomErro esta **incluso** no `errors.New("deu erro em foo " + err.Error())` na retornado pela funcao _foo_.
+
+```
+func foo() error {
+	err := bar()
+	if err != nil {
+		return fmt.Errorf("deu erro em foo: %w", err)
+	}
+	return nil
+}
+```
+
+para contornar essa situaćão o pacote _fmt_ tem a funcao _Errorf_ que possuir um verbo **%w** de _wrapper_ para dizer que o erro _err_ retornado por bar, está dentro do erro retornando pela funcao _foo_, dessa maneria o `errors.Is()` consegue fazer o match com CustomError
+
+Por isso a comunidade enconraja fortemente pela comunidade, fazer wrapper de erros para que, quem chamar essa funcao possa usar`errors.Is()` e identificar erros com precisão.
+
+```
+unc main() {
+	err := foo()
+	fmt.Println(err)
+	fmt.Println(errors.Is(err, ErrQualquer))
+	fmt.Println(errors.Is(err, ErrQualquer2))
+
+}
+
+var (
+	ErrQualquer  = errors.New("Erro")
+	ErrQualquer2 = errors.New("Erro 2")
+)
+
+func a() error { return ErrQualquer }
+func b() error { return ErrQualquer2 }
+
+func foo() error {
+	var errorRetults error
+
+	if err := a(); err != nil {
+		errorRetults = errors.Join(errorRetults, err)
+	}
+
+	if err := b(); err != nil {
+		errorRetults = errors.Join(errorRetults, err)
+
+	}
+
+	return errorRetults
+
+}
+```
+
+Outra maneira de fazer wrapper é usando o `errors.Join(groupper, error)`
+
+o resultado impresso na funcão main é:
+
+fmt.Println(err):
+Erro
+Erro 2
+
+onde o `fmt.Println(err)` concatena os erros com `\n`
+
+e consguimos fazer o match do erro com o `errors.Is()`
+
+`fmt.Println(errors.Is(err, ErrQualquer)) //true`
+`fmt.Println(errors.Is(err, ErrQualquer2)) //true`
