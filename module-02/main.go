@@ -1,24 +1,33 @@
 package main
 
+import (
+	"fmt"
+	"net/http"
+	"sync"
+	"time"
+)
+
 func main() {
-	foo(Foo{})
-	foo(Bar{})
-}
+	start := time.Now()
+	const n = 10
+	var wg sync.WaitGroup
+	wg.Add(n)
 
-type Foo struct{}
+	for range n {
+		go func() {
+			defer wg.Done()
 
-func (Foo) Fazer() {}
+			resp, err := http.Get("https://google.com")
+			if err != nil {
+				panic(err)
+			}
 
-type Bar struct{}
+			defer resp.Body.Close()
 
-func (Bar) Fazer() {}
+			fmt.Println("ok")
+		}()
+	}
+	wg.Wait()
+	fmt.Println(time.Since(start))
 
-type MyInterface interface {
-	Foo | Bar
-	Fazer()
-}
-
-// func foo[T MyInterface](arg T) {
-func foo[T MyInterface](arg T) {
-	arg.Fazer()
 }
