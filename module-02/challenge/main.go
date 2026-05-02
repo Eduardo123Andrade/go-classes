@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Measurement struct {
@@ -16,6 +18,7 @@ type Measurement struct {
 }
 
 func main() {
+	start := time.Now()
 	measurement, err := os.Open("measurements.txt")
 
 	if err != nil {
@@ -53,7 +56,25 @@ func main() {
 		dados[location] = measurement
 	}
 
-	for name, measmeasurement := range dados {
-		fmt.Printf("%s: %#+v\n", name, measmeasurement)
+	locations := make([]string, 0, len(dados))
+
+	for name := range dados {
+		locations = append(locations, name)
 	}
+
+	sort.Strings(locations)
+
+	fmt.Print("{")
+	for _, name := range locations {
+		measurement := dados[name]
+		fmt.Printf(
+			"%s=%.1f/%.1f/%.1f, ",
+			name,
+			measurement.Min,
+			measurement.Sum/float64(measurement.Count),
+			measurement.Max,
+		)
+	}
+	fmt.Println("}\n")
+	fmt.Println(time.Since(start))
 }
