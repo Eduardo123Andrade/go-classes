@@ -1,3 +1,5 @@
+// 2. Contador de Palavras Simples
+// Escreva uma função que receba uma string e use o bufio.Scanner para contar quantas palavras ela possui.
 package main
 
 import (
@@ -7,7 +9,7 @@ import (
 	"strings"
 )
 
-func main(){ 
+func main() {
 	const input = "Now is the winter of our discontent,\nMade glorious summer by this sun of York.\n"
 
 	scanner := bufio.NewScanner(strings.NewReader(input))

@@ -1,3 +1,5 @@
+// 3. Lendo um Arquivo Linha a Linha
+// Crie um programa que abra um arquivo .txt e imprima apenas as linhas que começam com o caractere # (comentários).
 package main
 
 import (
