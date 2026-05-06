@@ -1,0 +1,7 @@
+# I'm writing on this file in order to study how to read files in Go.
+
+ola, meu nome é Teste
+
+# I need to remember to put some more text here.
+# I'll appear in the next scan.
+# I'm Teste.
