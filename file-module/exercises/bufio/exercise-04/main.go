@@ -1,3 +1,6 @@
+// 4. O Escritor Otimizado
+// Crie um arquivo grande (100 mil linhas) escrevendo o número da linha em cada uma.
+// Use bufio.NewWriter para garantir que o programa não faça 100 mil chamadas de sistema (syscalls) ao disco.
 package main
 
 import (
