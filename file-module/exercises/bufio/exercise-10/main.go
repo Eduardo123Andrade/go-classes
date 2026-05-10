@@ -1,3 +1,7 @@
+// 10. Inversor de Arquivos (Buffer de trás para frente)
+// Implemente um programa que leia um arquivo e escreva um novo arquivo com as mesmas linhas, mas na ordem inversa (a última linha do original vira a primeira do novo).
+
+// Dica: Você provavelmente precisará ler o arquivo para uma slice em memória usando Scanner e depois descarregar usando Writer.
 package main
 
 import (

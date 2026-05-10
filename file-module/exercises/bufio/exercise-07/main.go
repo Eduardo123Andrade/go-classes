@@ -1,3 +1,8 @@
+// 7. O Método Peek
+// Use um bufio.Reader para espiar os primeiros 5 bytes de um arquivo sem "consumi-los"
+// (ou seja, sem mover o ponteiro de leitura). Depois, leia o arquivo inteiro normalmente e
+// verifique se esses 5 bytes ainda aparecem no início da leitura.
+
 package main
 
 import (
