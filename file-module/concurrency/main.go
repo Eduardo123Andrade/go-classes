@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -58,11 +59,11 @@ func main() {
 	}
 	defer file.Close()
 
-	lineChan := make(chan string)
+	lineChan := make(chan string, 100)
 	numbersToSumChann := make(chan int)
 	scanner := bufio.NewScanner(file)
 
-	const workersCounter = 10
+	workersCounter := runtime.NumCPU()
 
 	go func() {
 		for scanner.Scan() {
@@ -91,18 +92,20 @@ func main() {
 
 	var counter = 0
 	var wg2 sync.WaitGroup
-	wg2.Add(1)
 
+	var mu sync.Mutex
 	wg2.Go(func() {
-		for num := range numbersToSumChann {
-			counter += num
+		for range workersCounter {
+			for num := range numbersToSumChann {
+				mu.Lock()
+				counter += num
+				mu.Unlock()
+			}
 		}
 	})
 
 	wg.Wait()
 	close(numbersToSumChann)
-	// wg2.Wait()
-	// var counter SafeCounter = SafeCounter{}
 
 	fmt.Println("Terminado - Soma:", counter)
 	fmt.Println("Tempo: ", time.Since(now))
